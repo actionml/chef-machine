@@ -87,10 +87,10 @@ docker_container 'consul' do
   tag opts[:tag] || 'latest'
   host_name node[:machine][:hostname] || node[:hostname]
 
-  volumes opts[:volumes]
+  volumes opts[:volumes] || {}
 
   # ports and labels
-  port opts[:exposed_ports]
+  port opts[:exposed_ports] || {}
 
   labels ignore_exposed
 
@@ -115,10 +115,10 @@ docker_container 'registrator' do
     #{opts[:flags]} consul://#{node[:ipaddress]}:8500
   eos
 
-  volumes opts[:volumes]
+  volumes opts[:volumes] || {}
 
   # ports and labels
-  port opts[:exposed_ports]
+  port opts[:exposed_ports] || {}
   labels ignore_exposed
 
   log_opts opts[:log_opts]
@@ -136,10 +136,10 @@ docker_container 'nomad' do
   tag opts[:tag] || 'latest'
   host_name node[:machine][:hostname] || node[:hostname]
 
-  volumes opts[:volumes]
+  volumes opts[:volumes] || {}
 
   # ports and labels
-  port opts[:exposed_ports]
+  port opts[:exposed_ports] || {}
   labels ignore_exposed
 
   log_opts opts[:log_opts]
@@ -167,10 +167,10 @@ docker_container 'swarm' do
     consul://#{node[:ipaddress]}:8500
   eos
 
-  volumes opts[:volumes]
+  volumes opts[:volumes] || {}
 
   # ports and labels
-  port opts[:exposed_ports]
+  port opts[:exposed_ports] || {}
   labels ignore_exposed
 
   log_opts opts[:log_opts]
