@@ -1,0 +1,15 @@
+{
+  "start_join": [ "<%= @discovery_host %>" ],
+  "client_addr": "0.0.0.0",
+  "bind_addr": "0.0.0.0",
+  "advertise_addr": "<%= node[:ipaddress] %>",
+  "leave_on_terminate": true,
+  "data_dir": "/data",
+  "dns_config": {
+    "allow_stale": true,
+    "max_stale": "3s",
+    "node_ttl": "0"
+  },
+  "ui": false,
+  "server": false
+}
