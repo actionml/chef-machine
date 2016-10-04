@@ -11,15 +11,12 @@ default['machine']['core_containers']['consul'] = {
   tag: '0.6-agent',
   log_opts: engine_opts['log_opts'],
   exposed_ports: %W(
-    #{node[:ipaddress]}:8300:8300
-    #{node[:ipaddress]}:8301:8301
-    #{node[:ipaddress]}:8301:8301/udp
-    #{node[:ipaddress]}:8302:8302
-    #{node[:ipaddress]}:8302:8302/udp
-    #{node[:ipaddress]}:8400:8400
-    #{node[:ipaddress]}:8500:8500
-    #{node[:ipaddress]}:53:8600/udp
-    #{node[:ipaddress]}:53:8600
+    8300:8300
+    8301:8301 8301:8301/udp
+    8302:8302 8302:8302/udp
+    8400:8400
+    8500:8500
+    53:8600 53:8600/udp
   ),
   volumes: %w(
     /var/lib/consul:/data
@@ -48,8 +45,8 @@ default['machine']['core_containers']['nomad'] = {
   tag: '0.4',
   log_opts: engine_opts['log_opts'],
   exposed_ports: %W(
-    #{node[:ipaddress]}:4646:4646
-    #{node[:ipaddress]}:4747:4747
+    4646:4646
+    4747:4747
   ),
   volumes: %w(
     /var/lib/nomad:/data
