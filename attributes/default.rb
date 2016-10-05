@@ -26,5 +26,6 @@ default['consul'] = {
   resolv_defaults: {
     nameservers: %W(8.8.4.4 8.8.8.8)
   },
+  start_join: [],
   kv: {}
 }

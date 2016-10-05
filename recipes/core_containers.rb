@@ -27,7 +27,8 @@ end
 #
 
 # Write consul configuration
-nameservers = resolvconf[:nameservers]
+local_nameservers = resolvconf[:nameservers]
+
 template 'consul.agent.json' do
   path "#{core_containers['consul']['confdir']}/agent.json"
   source 'agent.json.erb'
@@ -35,8 +36,8 @@ template 'consul.agent.json' do
 
   variables(lazy {
     {
-      discovery_host: node['discovery']['host'],
-      nameservers: nameservers
+      start_join: node['consul']['start_join'],
+      recursors: local_nameservers
     }
   })
 

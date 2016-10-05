@@ -1,5 +1,5 @@
 {
-  "start_join": [ "<%= @discovery_host %>" ],
+  "start_join": <%= @start_join.to_json %>,
   "client_addr": "0.0.0.0",
   "bind_addr": "0.0.0.0",
   "advertise_addr": "<%= node[:ipaddress] %>",
@@ -10,7 +10,7 @@
     "max_stale": "3s",
     "node_ttl": "0"
   },
-  "recursors": <%= @nameservers.to_json %>
+  "recursors": <%= @recursors.to_json %>,
   "ui": false,
   "server": false
 }
