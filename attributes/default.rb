@@ -18,3 +18,8 @@ default['machine']['docker_engine'] = {
   log_opts: %w(max-size=50m max-file=5),
   labels: []
 }
+
+## Consul default address and a map that should be populated into consul.
+#
+default['consul']['address'] = '127.0.0.1:8500'
+default['consul']['kv'] = {}
