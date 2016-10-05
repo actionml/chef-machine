@@ -32,7 +32,8 @@ template 'consul.agent.json' do
 
   variables(lazy {
     {
-      discovery_host: node['discovery']['host']
+      discovery_host: node['discovery']['host'],
+      nameservers: Machine::Resolv.conf(node['consul']['resolv_defaults'])
     }
   })
 

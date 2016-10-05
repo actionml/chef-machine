@@ -21,5 +21,10 @@ default['machine']['docker_engine'] = {
 
 ## Consul default address and a map that should be populated into consul.
 #
-default['consul']['address'] = '127.0.0.1:8500'
-default['consul']['kv'] = {}
+default['consul'] = {
+  address: '127.0.0.1:8500',
+  resolv_defaults: {
+    nameservers: %W(8.8.4.4 8.8.8.8)
+  },
+  kv: {}
+}
