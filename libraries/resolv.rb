@@ -1,13 +1,14 @@
 
 module Machine
-  module Resolv
+  module ResolvHelpers
+
     CONF = '/etc/resolv.conf'
     IP = %r{(?:[01]?\d\d?|2[0-4]\d|25[0-5])\.(?:[01]?\d\d?|2[0-4]\d|25[0-5])\.(?:[01]?\d\d?|2[0-4]\d|25[0-5])\.(?:[01]?\d\d?|2[0-4]\d|25[0-5])}
     FQDN = %r{(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])*$}
 
-    def self.conf(defaults={})
+    def resolvconf
       if File.exist?(CONF)
-        defaults = Mash.new(defaults)
+        defaults = Mash.new(node['consul']['resolv_defaults'])
         conf = Mash.new()
         lines = File.readlines(CONF)
 

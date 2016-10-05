@@ -1,4 +1,6 @@
-Chef::Recipe.send(:include, Machine::Docker::RecipeMixin)
+extend Machine::DockerHelpers
+extend Machine::ResolvHelpers
+
 core_containers = node['machine']['core_containers']
 
 
@@ -25,6 +27,7 @@ end
 #
 
 # Write consul configuration
+nameservers = resolvconf[:nameservers]
 template 'consul.agent.json' do
   path "#{core_containers['consul']['confdir']}/agent.json"
   source 'agent.json.erb'
@@ -33,7 +36,7 @@ template 'consul.agent.json' do
   variables(lazy {
     {
       discovery_host: node['discovery']['host'],
-      nameservers: Machine::Resolv.conf(node['consul']['resolv_defaults'])
+      nameservers: nameservers
     }
   })
 
