@@ -29,3 +29,7 @@ default['consul'] = {
   start_join: [],
   kv: {}
 }
+
+## Chef root used for production.
+#
+default['machine']['chef_root'] = '/root/chef'
