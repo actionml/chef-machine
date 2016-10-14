@@ -7,5 +7,6 @@ long_description 'Installs/Configures machine'
 version          '0.1.1'
 
 depends 'consul_kv'
+depends 'aml'
 depends 'docker', '~> 2.9.6'
 depends 'chef-sugar', '~> 3.4.0'
