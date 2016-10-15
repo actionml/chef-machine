@@ -5,7 +5,7 @@
 
 # we expect berkshelf to be allready in chef gems
 berks_bin = "#{Gem.default_bindir}/berks"
-deploy_key = "/root/.ssh/deploy-#{aml.project[:key_name]}"
+deploy_key = "/root/.ssh/#{aml.project[:key_name]}-deploy"
 
 # Add deploy key into ssh-agent and get env.
 if ::File.exist?(deploy_key)
