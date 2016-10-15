@@ -33,3 +33,6 @@ default['consul'] = {
 ## Chef root used for production.
 #
 default['machine']['chef_root'] = '/root/chef'
+default['machine']['chef_cookbooks'] = {
+  "git@github.com:actionml/chef-services.git" => {}
+}
