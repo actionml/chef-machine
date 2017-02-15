@@ -41,8 +41,8 @@ default['machine']['core_containers']['nomad'] = {
   confdir: '/etc/nomad',
   scriptsdir: '/etc/nomad/scripts',
   jobsdir: '/etc/nomad/jobs',
-  image: 'makeomatic/nomad',
-  tag: '0.4',
+  image: 'stackfeed/nomad',
+  tag: '0.5',
   log_opts: engine_opts['log_opts'],
   exposed_ports: %W(
     4646:4646
