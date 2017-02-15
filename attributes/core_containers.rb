@@ -8,7 +8,7 @@ docker_opts = node['machine']['docker']
 default['machine']['core_containers']['consul'] = {
   confdir: '/etc/consul',
   image: 'stackfeed/consul',
-  tag: '0.6-agent',
+  tag: '0.7-agent',
   log_opts: engine_opts['log_opts'],
   exposed_ports: %W(
     8300:8300
