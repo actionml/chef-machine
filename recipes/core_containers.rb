@@ -32,7 +32,7 @@ local_nameservers = resolvconf[:nameservers]
 template 'consul.agent.json' do
   path "#{core_containers['consul']['confdir']}/agent.json"
   source 'agent.json.erb'
-  mode 0640
+  mode 0644
 
   variables(lazy {
     {
@@ -48,7 +48,7 @@ end
 template 'nomad.conf.hcl' do
   path "#{core_containers['nomad']['confdir']}/nomad.conf.hcl"
   source "nomad.conf.hcl.erb"
-  mode 0640
+  mode 0644
   variables(lazy {
     {
       datacenter: 'dc1',
