@@ -26,6 +26,12 @@ node['machine']['bootstrap_containers'].each do |container|
   # compose the default options
   opts = node['machine']['container_default_options'].merge(opts)
   
+  # pull image if missing
+  docker_image image do
+    tag tag || 'latest'
+    action (opts[:pull_action] || :pull_if_missing).to_sym
+  end
+
   # create host volume directories
   volumes.each do |volume|
     dirpath = volume.split(':').first
@@ -64,6 +70,6 @@ node['machine']['bootstrap_containers'].each do |container|
     privileged opts[:privileged] if opts[:privileged]
     restart_policy opts[:restart_policy] if opts[:log_opts]
 
-    action opts[:action] || :run
+    action (opts[:action] || :run).to_sym
   end
 end
