@@ -8,7 +8,7 @@ module Machine
 
     def resolvconf
       if File.exist?(CONF)
-        defaults = Mash.new(node['consul']['resolv_defaults'])
+        defaults = Mash.new(node['machine']['consul_options']['resolv_defaults'])
         conf = Mash.new()
         lines = File.readlines(CONF)
 

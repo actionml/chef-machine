@@ -1,38 +1,23 @@
+include_attribute 'machine::engine'
 
-# Docker access volumes, those used to access docker from inside a container
-default['machine']['docker'] = {
-  engine_port: 2375,
-  access_volumes: %w(
-    /var/run/docker.sock:/var/run/docker.sock
-    /usr/bin/docker:/usr/bin/docker
-  )
-}
-
-# Docker engine options
-default['machine']['docker_engine'] = {
-  data_dir: '/var/lib/docker',
-  bind: %W(
-            unix:///var/run/docker.sock
-            tcp://0.0.0.0:#{node[:machine][:docker][:engine_port]}
-          ),
-  log_opts: %w(max-size=50m max-file=5),
-  labels: []
-}
-
-## Consul default address and a map that should be populated into consul.
+## Specifies machine containers to bootstrap or ignore
 #
-default['consul'] = {
-  address: '127.0.0.1:8500',
-  resolv_defaults: {
-    nameservers: %W(8.8.4.4 8.8.8.8)
-  },
-  start_join: [],
-  kv: {}
-}
+default['machine']['bootstrap_containers'] = %w(
+  consul
+  swarm
+  nomad
+  registrator
+)
+default['machine']['ignore_containers'] = []
 
-## Chef root used for production.
+# Defaults (used as the base for merge)
+default['machine']['container_default_options']['log_opts'] = %w(max-size=50m max-file=5)
+
+## Volumes for passing docker binary and socket into
 #
-default['machine']['chef_root'] = '/root/chef'
-default['machine']['chef_cookbooks'] = {
-  "git@github.com:actionml/chef-services.git" => {}
-}
+socket = node['machine']['engine']['listens'].select {|l| l.start_with?('unix://') }.first || ""
+socket = socket.partition("unix://").last
+default['machine']['docker_passthrough_volumes'] = %W(
+  /var/run/docker.sock:/var/run/docker.sock
+  #{socket}
+)
