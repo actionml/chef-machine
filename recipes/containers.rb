@@ -12,6 +12,7 @@
 #
 
 extend Machine::DockerHelpers
+hostdir_resources = []
 
 
 node['machine']['bootstrap_containers'].each do |container|
@@ -25,20 +26,18 @@ node['machine']['bootstrap_containers'].each do |container|
   # compose the default options
   opts = node['machine']['container_default_options'].merge(opts)
   
-  # pull image if missing
-  docker_image image do
-    tag tag || 'latest'
-    action :pull_if_missing
-  end
-
   # create host volume directories
   volumes.each do |volume|
     dirpath = volume.split(':').first
+    next if hostdir_resources.include?(dirpath)
+
     directory dirpath do
       recursive true
       not_if { ::File.exist?(dirpath) }
       action :create
     end
+
+    hostdir_resources << dirpath
   end
 
   # execute specific container logic if recipe is available
