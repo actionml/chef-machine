@@ -34,16 +34,22 @@ default['machine']['containers']['consul']['volumes'] += %w(
 
 
 ## ----- registrator
-default['machine']['containers']['registrator'] = core_opts.merge({
+default['machine']['containers']['registrator'] = {
   image: 'gliderlabs/registrator:v7',
+  hostname: node['hostname'],
   flags: '',
   registrator_ignore: true,
   restart_policy: 'always'
-})
+}
 default['machine']['containers']['registrator']['command'] = <<-eos
     -ip #{node[:ipaddress]} -ttl 10 -ttl-refresh 5 -resync 3
     #{node['machine']['containers']['registrator']['flags']} consul://#{node[:ipaddress]}:8500
 eos
+default['machine']['containers']['registrator']['volumes'] = %w(
+  /var/run/docker.sock:/tmp/docker.sock
+  /usr/bin/docker:/usr/bin/docker
+)
+
 
 ## ----- nomad agent
 default['machine']['containers']['nomad'] = core_opts.merge({
