@@ -19,5 +19,7 @@ docker_service_manager 'default' do
 
   # Use specified driver or default chosen by Docker
   storage_driver(engine['storage_driver']) if engine['storage_driver']
-  action :start
+
+  # restart, because strangly driver has been picked up only after manual service restart
+  action :restart
 end
