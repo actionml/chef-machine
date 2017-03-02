@@ -12,13 +12,44 @@
 #
 
 extend Machine::DockerHelpers
-hostdir_resources = []
 
 
-node['machine']['bootstrap_containers'].each do |container|
-  next if node['machine']['ignore_containers'].include?(container)
+## Ordered hash of containers to bootstrap
+#
+bootstrap_containers =
+node['machine']['bootstrap_containers'].inject(Mash.new) do |mash, container|
+  node['machine']['ignore_containers'].include?(container) or
+    mash[container] = node['machine']['containers'][container]
+  mash
+end
 
-  opts = node['machine']['containers'][container]
+
+## Manage host directories for the volumes of bootstrap containers
+#
+host_paths =
+bootstrap_containers.map do |_, opts|
+  if opts['manage_volumes'] != false
+    (opts['volumes'] || []).map { |v| v.partition(':').first }
+  else
+    []
+  end
+end.flatten.uniq
+
+host_paths.each do |dirpath|
+  directory dirpath do
+    recursive true
+
+    # host path might exist and be a file
+    not_if { ::File.exist?(dirpath) }
+    action :create
+  end
+end
+
+
+## Create containers
+#
+bootstrap_containers.each do |container, opts|
+
   image = opts[:image].split(':')[0]
   tag = opts[:image].split(':')[1] || 'latest'
   volumes = opts[:volumes] || []
@@ -30,20 +61,6 @@ node['machine']['bootstrap_containers'].each do |container|
   docker_image image do
     tag tag || 'latest'
     action (opts[:pull_action] || :pull_if_missing).to_sym
-  end
-
-  # create host volume directories
-  volumes.each do |volume|
-    dirpath = volume.split(':').first
-    next if hostdir_resources.include?(dirpath)
-
-    directory dirpath do
-      recursive true
-      not_if { ::File.exist?(dirpath) }
-      action :create
-    end
-
-    hostdir_resources << dirpath
   end
 
   # execute specific container logic if recipe is available

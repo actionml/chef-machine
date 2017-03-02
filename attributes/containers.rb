@@ -3,7 +3,7 @@
 include_attribute 'machine::default'
 
 core_opts = Mash.new({
-  volumes: node['machine']['docker_passthrough_volumes'],
+  volumes:  node['machine']['docker_passthrough_volumes'],
   hostname: node['hostname']
 })
 
@@ -41,10 +41,12 @@ default['machine']['containers']['registrator'] = {
   registrator_ignore: true,
   restart_policy: 'always'
 }
+
 default['machine']['containers']['registrator']['command'] = <<-eos
     -ip #{node[:ipaddress]} -ttl 10 -ttl-refresh 5 -resync 3
     #{node['machine']['containers']['registrator']['flags']} consul://#{node[:ipaddress]}:8500
 eos
+
 default['machine']['containers']['registrator']['volumes'] = %w(
   /var/run/docker.sock:/tmp/docker.sock
   /usr/bin/docker:/usr/bin/docker
@@ -63,8 +65,10 @@ default['machine']['containers']['nomad'] = core_opts.merge({
   ),
   registrator_ignore: true,
   restart_policy: 'always',
-  privileged: true
+  privileged: true,
+  manage_volumes: false
 })
+
 default['machine']['containers']['nomad']['volumes'] += %w(
   /var/lib/nomad:/data
   /etc/nomad:/config
