@@ -53,6 +53,7 @@ bootstrap_containers.each do |container, opts|
   image = opts[:image].split(':')[0]
   tag = opts[:image].split(':')[1] || 'latest'
   volumes = opts[:volumes] || []
+  labels = opts[:lables] || []
 
   # compose the default options
   opts = node['machine']['container_default_options'].merge(opts)
@@ -70,14 +71,17 @@ bootstrap_containers.each do |container, opts|
   end
 
   # exposed ports of a container should be ignored by registrator and lables
-  registrator_ignore = registrator_ignore_labels(opts[:exposed_ports]) if opts[:registrator_ignore]
-  labels = Array(opts[:lables]) + Array(registrator_ignore)
+  if opts[:registrator_ignore]
+    registrator_ignore = registrator_ignore_labels(opts[:exposed_ports])
+  else
+    registrator_ignore = []
+  end
 
   # start a service container
   docker_container container do
     repo image
     tag tag
-    labels labels
+    labels labels + registrator_ignore
     volumes volumes
 
     command opts[:command] if opts[:command]
