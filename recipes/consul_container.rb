@@ -1,7 +1,17 @@
-extend Machine::ResolvHelpers
+extend Machine::NetworkHelpers
 
-# Write consul configuration
-local_nameservers = resolvconf[:nameservers]
+# Set consul cookbook specific for our configuration
+node.default['consul']['service']['config_dir'] = node['machine']['containers']['consul']['confdir']
+node.default['consul']['service_user'] = 'root'
+node.default['consul']['service_group'] = 'root'
+
+
+## Write consul configuration
+#
+
+# merge with failsafe defaults in case machine's resolve.conf is flawed or empty
+failsafe = node['machine']['consul_options']['resolv_failsafe']
+nameservers = failsafe.merge(resolvconf)['nameservers']
 
 template 'consul.agent.json' do
   path "#{node['machine']['containers']['consul']['confdir']}/agent.json"
@@ -10,7 +20,7 @@ template 'consul.agent.json' do
   variables(lazy {
     {
       start_join: node['machine']['consul_options']['start_join'],
-      recursors: local_nameservers
+      recursors: nameservers
     }
   })
   notifies :redeploy, 'docker_container[consul]', :immediately
@@ -20,4 +30,25 @@ end
 execute 'reload consul-agent' do
   command 'docker kill -s HUP consul; true'
   action :nothing
+end
+
+
+## Register machine node_class
+#
+
+node_class = node['machine']['node_class']
+node_address = host_addresses[node['machine']['network_number']]
+
+consul_definition "node-#{node_class}" do
+  type 'service'
+
+  parameters({
+    address: node_address,
+    tags: node['machine']['node_tags']
+  })
+
+  not_if { node_class.empty? }
+
+  notifies :run, 'execute[reload consul-agent]'
+  action :create
 end

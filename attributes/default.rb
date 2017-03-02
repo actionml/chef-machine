@@ -1,5 +1,9 @@
 include_attribute 'machine::engine'
 
+default['machine']['node_class'] = ''
+default['machine']['node_tags'] = []
+default['machine']['network_number'] = 0
+
 ## Specifies machine containers to bootstrap or ignore
 #
 default['machine']['bootstrap_containers'] = %w(
