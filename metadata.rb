@@ -4,7 +4,7 @@ maintainer_email 'devops@actionml.com'
 license          'All rights reserved'
 description      'Installs/Configures machine'
 long_description 'Installs/Configures machine'
-version          '0.1.3'
+version          '0.1.4'
 
 # depends 'consul_kv'
 depends 'aml'
