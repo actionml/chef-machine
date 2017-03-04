@@ -1,3 +1,5 @@
+require 'ec2_metadata'
+
 extend Machine::NetworkHelpers
 
 # Set consul cookbook specific for our configuration
@@ -39,13 +41,29 @@ end
 node_class = node['machine']['node_class']
 node_address = host_addresses[node['machine']['network_number']]
 
+
+## Use node id based on cloud provider instance id
+#
+parameters =  case node['cloud']['provider']
+              when 'ec2'
+                {
+                  id: Ec2Metadata['instance_id']
+                }
+              else
+                {}
+              end
+
+
+# create service defintion in consul
 consul_definition "node-#{node_class}" do
   type 'service'
 
-  parameters({
-    address: node_address,
-    tags: node['machine']['node_tags']
-  })
+  parameters(
+    parameters.merge(
+      address: node_address,
+      tags: node['machine']['node_tags']
+    )
+  )
 
   not_if { node_class.empty? }
 
