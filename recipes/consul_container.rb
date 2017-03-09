@@ -2,6 +2,7 @@ require 'ec2_metadata'
 
 extend Machine::NetworkHelpers
 
+
 # Set consul cookbook specific for our configuration
 node.default['consul']['service']['config_dir'] = node['machine']['containers']['consul']['confdir']
 node.default['consul']['service_user'] = 'root'
@@ -12,7 +13,7 @@ node.default['consul']['service_group'] = 'root'
 #
 
 node_meta = {
-  node_class:  node['machine']['node_class'],
+  class:  node['machine']['node_class'] || 'node',
   instance_id: Ec2Metadata['instance_id'] 
 }
 
@@ -34,9 +35,13 @@ template 'consul.agent.json' do
   mode 0644
   variables(lazy {
     {
-      start_join: node['machine']['consul_options']['start_join'],
+      start_join:
+          node['machine']['consul_options']['start_join'],
+      leave_on_terminate:
+          node['machine']['consul_options']['leave_on_terminate'],
       recursors: nameservers,
-      node_meta: JSON.pretty_generate(node_meta).gsub(/^/, '  ').strip
+      node_meta:
+          JSON.pretty_generate(node_meta).gsub(/^/, '  ').strip
     }
   })
   notifies :redeploy, 'docker_container[consul]', :immediately
@@ -46,4 +51,22 @@ end
 execute 'reload consul-agent' do
   command 'docker kill -s HUP consul; true'
   action :nothing
+end
+
+
+## Create "node" helper service to hold additional info which
+#  can be retrieved at run-time
+
+consul_definition "_node" do
+  type 'service'
+
+  parameters(
+    parameters.merge(
+      tags: node['machine']['node_tags'] +
+        node_meta.map {|k, v| "#{k}:#{v}"}
+    )
+  )
+
+  notifies :run, 'execute[reload consul-agent]'
+  action :create
 end

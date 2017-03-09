@@ -3,7 +3,7 @@
   "client_addr": "0.0.0.0",
   "bind_addr": "0.0.0.0",
   "advertise_addr": "<%= node[:ipaddress] %>",
-  "leave_on_terminate": true,
+  "leave_on_terminate": <%= @leave_on_terminate.to_s.downcase.match(/(true|yes|y|1)$/i) != nil %>,
   "data_dir": "/data",
   "dns_config": {
     "allow_stale": true,
