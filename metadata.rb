@@ -12,4 +12,7 @@ depends 'docker', '~> 2.15.2'
 depends 'chef-sugar', '~> 3.4.0'
 depends 'nomad', '~> 0.1.0'
 depends 'consul'
-depends 'build-essential'
+
+## fixing dependencies for bad cookbooks
+depends 'build-essential', '>= 8.0.0'
+depends 'golang', '>= 1.7'
