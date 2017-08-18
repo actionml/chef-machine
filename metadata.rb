@@ -16,3 +16,4 @@ depends 'consul'
 ## fixing dependencies for bad cookbooks
 depends 'build-essential', '>= 8.0.0'
 depends 'golang', '>= 1.7'
+depends 'nssm', '>= 4.0.0'
