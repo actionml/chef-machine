@@ -2,24 +2,21 @@
 # Cookbook Name:: machine
 # Recipe:: docker_engine
 #
-# Copyright (C) 2016 ActionML
+# Copyright (C) 2016-2018 ActionML
 #
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'machine::_docker_settings'
-engine = node['machine']['engine']
+# setup_docker_engine returns node['machine']['engine']
+engine = setup_docker_engine
 
-## ReConfigure the "default" docker service and start
-#
+# configure the "default" docker service and start
 docker_service_manager 'default' do
   host engine['listens']
   graph engine['data_dir']
   labels engine['labels']
+  storage_driver engine['storage_driver']
 
-  # Use specified driver or default chosen by Docker
-  storage_driver(engine['storage_driver']) if engine['storage_driver']
-
-  # restart, because strangly driver has been picked up only after manual service restart
-  action :restart
+  # restart, because strangely driver has been picked up only after manual service restart
+  action :start
 end
