@@ -8,3 +8,4 @@ version          '0.2.0'
 
 depends 'docker'
 depends 'chef-sugar'
+depends 'consul'

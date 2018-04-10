@@ -1,5 +1,8 @@
 require 'chef/mixin/shell_out'
 
+## These modules provide helpers to configure docker, specifically
+#  the node attributes.
+#
 module Machine
   module Docker
     extend Chef::Mixin::ShellOut
@@ -45,11 +48,54 @@ module Machine
       end
     end
 
+    ## Add docker volumes into a container
+    #
+    def docker_volumes_passthrough(container)
+      unless node['machine']['containers'][container]['docker_passthrough']
+        return
+      end
+
+      volumes = node['machine']['containers'][container]['volumes'] || []
+      node.default['machine']['containers'][container]['volumes'] =
+        node['machine']['docker_volumes'].to_a.concat(volumes)
+    end
+
+    # Create host directories for container volumes, in case if they are missing
+    def create_missing_volumedirs(container)
+      volumes = node['machine']['containers'][container]['volumes'] || []
+      volumes.each do |mapping|
+        hostpath = mapping.split(':').first
+
+        directory hostpath do
+          recursive true
+          # host path might exist and be a file
+          not_if { ::File.exist?(hostpath) }
+          action :create
+        end
+      end
+    end
+
+    # Get container image and tag
+    def get_image_tag(string)
+      image, tag = string.split(':')
+      tag ||= 'latest'
+
+      [image, tag]
+    end
+
+    # Setup engine attributes
     def setup_docker_engine
       define_listners
       define_storage_driver
 
       node['machine']['engine']
+    end
+
+    # Setup each container attributes
+    def setup_containers
+      node['machine']['bootstrap_containers'].each do |container|
+        docker_volumes_passthrough(container)
+      end
     end
   end
 end
