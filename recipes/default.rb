@@ -58,6 +58,7 @@ node['machine']['bootstrap_containers'].each do |container|
 
     command spec[:command] if spec[:command]
     host_name spec[:hostname] if spec[:hostname]
+    network_mode spec[:network_mode] if spec[:network_mode]
     privileged spec[:privileged] if spec[:privileged]
     restart_policy spec[:restart_policy] if spec[:restart_policy]
 

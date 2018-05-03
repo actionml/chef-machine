@@ -20,6 +20,8 @@ default['machine']['containers'] = {
       8400:8400
       8500:8500
     ],
+    # currently set since resolution fails on Bionic
+    network_mode: 'host',
     ## not redirect of the local dns to consul
     # 53:8600 53:8600/udp
     volumes: %w[
